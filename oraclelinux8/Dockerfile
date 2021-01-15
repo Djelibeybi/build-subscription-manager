@@ -1,3 +1,6 @@
+# Copyright (c) 2021 Avi Miller
+# Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
+
 FROM oraclelinux:8-slim
 
 RUN microdnf install dnf dnf-plugins-core \

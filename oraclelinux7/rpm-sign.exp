@@ -1,4 +1,8 @@
 #!/usr/bin/expect -f
+#
+# Copyright (c) 2021 Avi Miller
+# Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
+
 spawn rpmsign --addsign {*}$argv
 expect -exact "Enter pass phrase: "
 send -- "[read [open /gpg/passphrase r]]"

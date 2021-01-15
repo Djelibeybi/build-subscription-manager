@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# Copyright (c) 2021 Avi Miller
+# Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
 
 # Import and trust the GPG key
 gpg --import --pinentry-mode loopback --passphrase-file /gpg/passphrase < /gpg/key.asc
