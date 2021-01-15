@@ -1,0 +1,5 @@
+#!/usr/bin/expect -f
+spawn rpmsign --addsign {*}$argv
+expect -exact "Enter pass phrase: "
+send -- "[read [open /gpg/passphrase r]]"
+expect eof
