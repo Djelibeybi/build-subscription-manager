@@ -11,15 +11,19 @@ gpg --import --passphrase-file /gpg/passphrase < /gpg/key.asc
 cd /root || exit
 git clone https://github.com/candlepin/subscription-manager.git
 
-# Build the SRPM using tito
+# Build the SRPM using tito then install it
 cd subscription-manager || exit
 tito build --tag subscription-manager-1.24.45-1 --srpm --dist=.el7 --offline
-cp /tmp/tito/*.src.rpm /root/rpmbuild/SRPMS/
+rpm -ivh /tmp/tito/subscription-manager-1.24.45-1.el7.src.rpm
+
+# Patch the subscription-manager.spec file
+cd /root/rpmbuild || exit
+patch -p0 < /obsolete-rhn-rpms.diff
 
 # Build the binary RPMs
 cd /root/rpmbuild || exit
-yum-builddep -y --enablerepo=ol7_optional_latest SRPMS/subscription-manager-1.24.45-1.el7.src.rpm
-rpmbuild --rebuild SRPMS/subscription-manager-1.24.45-1.el7.src.rpm
+yum-builddep -y --enablerepo=ol7_optional_latest /tmp/tito/subscription-manager-1.24.45-1.el7.src.rpm
+rpmbuild -ba SPECS/subscription-manager.spec
 
 # Sign the binary RPMs
 echo "%_gpg_name Avi Miller <me@dje.li>" >> /root/.rpmmacros
