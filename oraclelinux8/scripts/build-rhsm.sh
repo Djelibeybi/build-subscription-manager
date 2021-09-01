@@ -13,19 +13,25 @@ git clone https://github.com/candlepin/subscription-manager.git
 
 # Use tito to build the source RPM
 cd /root/subscription-manager || exit
-tito build --tag=subscription-manager-1.27.16-1 --srpm --dist=.el8 --offline
-cp /tmp/tito/*.src.rpm /root/rpmbuild/SRPMS/
+tito build --tag="subscription-manager-$RHSM_VERSION-$RHSM_RELEASE" --srpm --dist=".$RHSM_DIST" --offline
+cp "/tmp/tito/subscription-manager-$RHSM_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rpm" /root/rpmbuild/SRPMS/
 
 # Use rpmbuild to build and sign the binary RPMs
-cd /root/rpmbuild || exit
-cat << EOF >> /root/.rpmmacros
+if [ -f /gpg/key.asc ] && [ -f /gpg/passphrase ] && [ "$GPG_NAME_EMAIL" ]; then
+   SIGN="--sign"
+  cd /root/rpmbuild || exit
+  cat << EOF >> /root/.rpmmacros
 
 %_gpg_sign_cmd_extra_args  --batch --pinentry-mode loopback --passphrase-file /gpg/passphrase
-%_gpg_name Avi Miller <me@dje.li>
+%_gpg_name ${GPG_NAME_EMAIL}
 EOF
 
-dnf builddep -y SRPMS/subscription-manager-1.27.16-1.el8.src.rpm
-rpmbuild --rebuild --sign SRPMS/subscription-manager-1.27.16-1.el8.src.rpm
+else
+  echo "Not signing the packages. One or more of the key.asc and passphrase files and the GPG_NAME_EMAIL environment variable are missing."
+fi
+
+dnf builddep -y "SRPMS/subscription-manager-$RHSM_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rpm"
+rpmbuild --rebuild $SIGN "SRPMS/subscription-manager-$RHSM_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rpm"
 
 # Copy the RPMs to the output location
 mkdir /output/oraclelinux8

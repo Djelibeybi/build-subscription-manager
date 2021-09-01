@@ -1,0 +1,5 @@
+oraclelinux7/gpg/*.asc
+oraclelinux7/gpg/passphrase
+oraclelinux8/gpg/*.asc
+oraclelinux8/gpg/passphrase
+**/output/*.rpm

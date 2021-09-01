@@ -1,21 +1,20 @@
---- SPECS/subscription-manager.spec.orig	2020-11-24 15:38:49.000000000 +0000
-+++ SPECS/subscription-manager.spec	2021-01-16 06:50:51.117915861 +0000
-@@ -1,3 +1,5 @@
+--- subscription-manager.spec.orig	2021-04-16 03:21:49.000000000 +1000
++++ subscription-manager.spec	2021-09-01 11:46:07.000000000 +1000
+@@ -1,3 +1,4 @@
 +%global _name subscription-manager
-+
  # Prefer systemd over sysv on Fedora and RHEL 7+
  %global use_systemd 0%{?fedora} || (0%{?rhel} && 0%{?rhel} >= 7) || (0%{?suse_version} && 0%{?suse_version} >= 1315)
  # For optional building of ostree-plugin sub package. Unrelated to systemd
-@@ -131,7 +133,7 @@
+@@ -131,7 +132,7 @@
  
  %global subpackages SUBPACKAGES="%{?include_syspurpose:syspurpose}"
  
 -Name: subscription-manager
 +Name: subscription-manager-el7
- Version: 1.24.45
+ Version: 1.24.48
  Release: 1%{?dist}
  Summary: Tools and libraries for subscription and repository management
-@@ -144,18 +146,18 @@
+@@ -144,18 +145,18 @@
  # git clone https://github.com/candlepin/subscription-manager.git
  # yum install tito
  # tito build --tag subscription-manager-$VERSION-$RELEASE --tgz
@@ -37,7 +36,7 @@
  %endif
  
  # The following macro examples are preceeded by '%' to stop macro expansion
-@@ -264,12 +266,24 @@
+@@ -264,6 +265,19 @@
  BuildRequires: systemd
  %endif
  
@@ -57,12 +56,6 @@
  %description
  The Subscription Manager package provides programs and libraries to allow users
  to manage subscriptions and yum repositories from the Red Hat entitlement
- platform.
- 
--
- %package -n %{py_package_prefix}-syspurpose
- Summary: A commandline utility for declaring system syspurpose
- Group: System Environment/Base
 @@ -282,7 +296,7 @@
  %package -n subscription-manager-plugin-container
  Summary: A plugin for handling container content

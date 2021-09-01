@@ -2,6 +2,7 @@
 #
 # Copyright (c) 2021 Avi Miller
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
+set -x
 
 # Import GPG key and trust it
 gpg --import --passphrase-file /gpg/passphrase < /gpg/key.asc
@@ -13,21 +14,24 @@ git clone https://github.com/candlepin/subscription-manager.git
 
 # Build the SRPM using tito then install it
 cd subscription-manager || exit
-tito build --tag subscription-manager-1.24.45-1 --srpm --dist=.el7 --offline
-rpm -ivh /tmp/tito/subscription-manager-1.24.45-1.el7.src.rpm
+tito build --tag="subscription-manager-$RHSM_VERSION-$RHSM_RELEASE" --srpm --dist=".$RHSM_DIST" --offline
+cp "/tmp/tito/subscription-manager-$RHSM_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rpm" /root/rpmbuild/SRPMS/
+rpm -ivh "/root/rpmbuild/SRPMS/subscription-manager-$RHSM_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rpm"
 
 # Patch the subscription-manager.spec file
-cd /root/rpmbuild || exit
+cd /root/rpmbuild/SPECS || exit
 patch -p0 < /obsolete-rhn-rpms.diff
 
 # Build the binary RPMs
 cd /root/rpmbuild || exit
-yum-builddep -y --enablerepo=ol7_optional_latest /tmp/tito/subscription-manager-1.24.45-1.el7.src.rpm
+yum-builddep -y --enablerepo=ol7_optional_latest "/tmp/tito/subscription-manager-$RHSM_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rpm"
 rpmbuild -ba SPECS/subscription-manager.spec
 
-# Sign the binary RPMs
-echo "%_gpg_name Avi Miller <me@dje.li>" >> /root/.rpmmacros
-find /root/rpmbuild/RPMS -name '*.rpm' -exec /rpm-sign.exp {} \;
+# Sign the binary RPMs if the required files and envvar are provided.
+if [ -f /gpg/key.asc ] && [ -f /gpg/passphrase ] && [ "$GPG_NAME_EMAIL" ]; then
+  echo "%_gpg_name $GPG_NAME_EMAIL" >> /root/.rpmmacros
+  find /root/rpmbuild/RPMS -name '*.rpm' -exec /rpm-sign.exp {} \;
+fi
 
 # Copy the RPMs to the output location
 mkdir /output/oraclelinux7

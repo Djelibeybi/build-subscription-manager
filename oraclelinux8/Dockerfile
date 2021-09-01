@@ -1,10 +1,9 @@
 # Copyright (c) 2021 Avi Miller
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
 
-FROM oraclelinux:8-slim
+FROM oraclelinux:8
 
-RUN microdnf install dnf dnf-plugins-core \
-    && echo > /etc/dnf/vars/ociregion \
+RUN echo > /etc/dnf/vars/ociregion \
     && dnf config-manager --enable ol8_codeready_builder ol8_distro_builder \
     && dnf config-manager  --setopt=tsflags=nodocs --save \
     && dnf -y module install nodejs \
@@ -16,7 +15,7 @@ RUN microdnf install dnf dnf-plugins-core \
     && npm install -g yarn \
     && rpmdev-setuptree
 
-COPY build-rhsm.sh /
+COPY scripts/build-rhsm.sh /
 RUN chmod +x /build-rhsm.sh
 
 CMD ["/build-rhsm.sh"]

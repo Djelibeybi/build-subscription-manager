@@ -9,7 +9,7 @@ RUN yum -y install oracle-epel-release-el7 oracle-nodejs-release-el7 \
     && npm install -g yarn \
     && rpmdev-setuptree
 
-COPY build-rhsm.sh rpm-sign.exp obsolete-rhn-rpms.diff /
+COPY scripts/* /
 RUN chmod +x /build-rhsm.sh /rpm-sign.exp
 
 CMD ["/build-rhsm.sh"]
