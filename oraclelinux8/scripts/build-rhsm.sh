@@ -3,9 +3,6 @@
 # Copyright (c) 2021 Avi Miller
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
 
-# Import and trust the GPG key
-gpg --import --pinentry-mode loopback --passphrase-file /gpg/passphrase < /gpg/key.asc
-(echo 5; echo y; echo save) | gpg --command-fd 0 --no-tty --no-greeting -q --edit-key "$(gpg --list-packets < /gpg/key.asc | awk '$1=="keyid:"{print$2;exit}')" trust
 
 # Clone the repo
 cd /root || exit
@@ -18,6 +15,11 @@ cp "/tmp/tito/subscription-manager-$RHSM_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rp
 
 # Use rpmbuild to build and sign the binary RPMs
 if [ -f /gpg/key.asc ] && [ -f /gpg/passphrase ] && [ "$GPG_NAME_EMAIL" ]; then
+
+  # Import and trust the GPG key
+  gpg --import --pinentry-mode loopback --passphrase-file /gpg/passphrase < /gpg/key.asc
+  (echo 5; echo y; echo save) | gpg --command-fd 0 --no-tty --no-greeting -q --edit-key "$(gpg --list-packets < /gpg/key.asc | awk '$1=="keyid:"{print$2;exit}')" trust
+
    SIGN="--sign"
   cd /root/rpmbuild || exit
   cat << EOF >> /root/.rpmmacros
