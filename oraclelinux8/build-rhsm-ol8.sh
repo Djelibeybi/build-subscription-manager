@@ -1,6 +1,8 @@
 #!/bin/bash
-set -x
-
+#
+# Copyright (c) 2021 Avi Miller
+# Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
+#
 # find the latest upstream version of the subscription-manager RPM
 RHSM_NVR=$(docker run --rm -it -v $PWD/scripts:/scripts registry.access.redhat.com/ubi8/ubi rpm -q --queryformat="%{VERSION}:%{RELEASE}" subscription-manager)
 RHSM_VERSION=$(echo "$RHSM_NVR" | cut -d: -f1)

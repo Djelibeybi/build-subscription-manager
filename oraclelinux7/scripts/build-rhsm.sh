@@ -2,7 +2,6 @@
 #
 # Copyright (c) 2021 Avi Miller
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
-set -x
 
 # Import GPG key and trust it
 gpg --import --passphrase-file /gpg/passphrase < /gpg/key.asc
