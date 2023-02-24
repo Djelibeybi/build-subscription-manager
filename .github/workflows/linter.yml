@@ -2,8 +2,6 @@
 name: Lint code base
 
 on:
-  push:
-    branches-ignore: [main]
   pull_request:
     branches: [main]
 
