@@ -1,15 +1,17 @@
 #!/bin/bash
 #
-# Copyright (c) 2021 Avi Miller
+# Copyright (c) 2021, 2023 Avi Miller
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
-
 
 # Clone the repo
 cd /root || exit
 git clone https://github.com/candlepin/subscription-manager.git
 
-# Use tito to build the source RPM
+# Checkout the release tag
 cd /root/subscription-manager || exit
+git checkout "subscription-manager-$RHSM_VERSION-$RHSM_RELEASE"
+
+# Use tito to build the source RPM
 tito build --tag="subscription-manager-$RHSM_VERSION-$RHSM_RELEASE" --srpm --dist=".$RHSM_DIST" --offline
 cp "/tmp/tito/subscription-manager-$RHSM_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rpm" /root/rpmbuild/SRPMS/
 
@@ -33,8 +35,11 @@ else
 fi
 
 dnf builddep -y "/root/rpmbuild/SRPMS/subscription-manager-$RHSM_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rpm"
+# shellcheck disable=SC2086
 rpmbuild --rebuild $SIGN "/root/rpmbuild/SRPMS/subscription-manager-$RHSM_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rpm"
 
 # Copy the RPMs to the output location
-mkdir /output/oraclelinux8
-cp -r /root/rpmbuild/RPMS/* /output/oraclelinux8/
+if [ ! -d /output/oraclelinux8 ]; then
+  mkdir /output/oraclelinux8
+fi
+cp -rf /root/rpmbuild/RPMS/* /output/oraclelinux8/

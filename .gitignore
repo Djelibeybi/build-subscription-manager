@@ -1,5 +1,6 @@
 # Ignore the GPG key and passphrase files
 *.asc
 passphrase
-# Ignore all the output RPMs
-**/output/*.rpm
+# Ignore almost everything in the output/ directories
+**/output/*
+!**/output/.gitkeep

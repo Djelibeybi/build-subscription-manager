@@ -9,12 +9,13 @@ RHSM_VERSION=$(echo "$RHSM_NVR" | cut -d: -f1)
 RHSM_REL=$(echo "$RHSM_NVR" | cut -d: -f2)
 RHSM_RELEASE=$(echo "$RHSM_REL" | cut -d. -f1)
 RHSM_DIST=$(echo "$RHSM_REL" | cut -d. -f2)
+IMG_VER=$(git rev-parse --short=12 HEAD)
 
 # build image if necessary
 {
-  docker image inspect build-rhsm:ol9 &>/dev/null
+  docker image inspect "build-rhsm:ol9-$IMG_VER" &>/dev/null
 } || {
-  docker build -t build-rhsm:ol9 .
+  docker build -t "build-rhsm:ol9-$IMG_VER" .
 }
 
 # build the packages in a container which will delete itself once it's done
@@ -26,4 +27,4 @@ docker run --rm -it \
     -e RHSM_RELEASE="$RHSM_RELEASE" \
     -e RHSM_DIST="$RHSM_DIST" \
     -e GPG_NAME_EMAIL \
-    build-rhsm:ol9
+    "build-rhsm:ol9-$IMG_VER"
