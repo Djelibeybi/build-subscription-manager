@@ -5,15 +5,6 @@
  # Prefer systemd over sysv on Fedora and RHEL 7+
  %global use_systemd 0%{?fedora} || (0%{?rhel} && 0%{?rhel} >= 7) || (0%{?suse_version} && 0%{?suse_version} >= 1315)
  # For optional building of ostree-plugin sub package. Unrelated to systemd
-@@ -131,7 +132,7 @@
- 
- %global subpackages SUBPACKAGES="%{?include_syspurpose:syspurpose}"
- 
--Name: subscription-manager
-+Name: subscription-manager-el7
- Version: 1.24.48
- Release: 1%{?dist}
- Summary: Tools and libraries for subscription and repository management
 @@ -144,18 +145,18 @@
  # git clone https://github.com/candlepin/subscription-manager.git
  # yum install tito
