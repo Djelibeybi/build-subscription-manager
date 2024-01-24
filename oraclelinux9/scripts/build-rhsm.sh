@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2021, 2023 Avi Miller
+# Copyright (c) 2021, 2024 Avi Miller
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
 
 # Clone the repo
@@ -14,6 +14,11 @@ git checkout "subscription-manager-$RHSM_VERSION-$RHSM_RELEASE"
 # Use tito to build the source RPM
 tito build --tag="subscription-manager-$RHSM_VERSION-$RHSM_RELEASE" --srpm --dist=".$RHSM_DIST" --offline
 cp "/tmp/tito/subscription-manager-$RHSM_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rpm" /root/rpmbuild/SRPMS/
+
+# Patch the subscription-manager.spec file
+rpm -ivh "/root/rpmbuild/SRPMS/subscription-manager-$RHSM_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rpm"
+cd /root/rpmbuild/SPECS || exit
+patch -p0 < /remove-certificates.diff
 
 # Use rpmbuild to build and sign the binary RPMs
 if [ -f /gpg/key.asc ] && [ -f /gpg/passphrase ] && [ "$GPG_NAME_EMAIL" ]; then
@@ -36,7 +41,7 @@ fi
 
 dnf builddep -y "/root/rpmbuild/SRPMS/subscription-manager-$RHSM_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rpm"
 # shellcheck disable=SC2086
-rpmbuild --rebuild $SIGN "/root/rpmbuild/SRPMS/subscription-manager-$RHSM_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rpm"
+rpmbuild -ba $SIGN /root/rpmbuild/SPECS/subscription-manager.spec
 
 # Copy the RPMs to the output location
 if [ ! -d /output/oraclelinux9 ]; then

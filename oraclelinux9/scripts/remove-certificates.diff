@@ -1,0 +1,20 @@
+--- subscription-manager.spec.orig	2024-01-24 14:24:56.627737164 +1100
++++ subscription-manager.spec	2024-01-24 14:25:25.788017945 +1100
+@@ -135,7 +135,7 @@
+ Requires:  %{py_package_prefix}-decorator
+ Requires:  virt-what
+ Requires:  %{rhsm_package_name} = %{version}
+-Requires: subscription-manager-rhsm-certificates
++
+ %ifarch %{dmidecode_arches}
+ Requires: dmidecode
+ %endif
+@@ -327,7 +327,7 @@
+ Requires: %{py_package_prefix}-dateutil
+ %endif
+ Requires: %{py_package_prefix}-iniparse
+-Requires: subscription-manager-rhsm-certificates
++
+ # Required by Fedora packaging guidelines
+ %{?python_provide:%python_provide %{py_package_prefix}-rhsm}
+ Requires: python3-cloud-what = %{version}-%{release}

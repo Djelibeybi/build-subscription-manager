@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Avi Miller
+# Copyright (c) 2021, 2024 Avi Miller
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
 
 FROM oraclelinux:8
@@ -15,7 +15,7 @@ RUN echo > /etc/dnf/vars/ociregion \
     && npm install -g yarn \
     && rpmdev-setuptree
 
-COPY scripts/build-rhsm.sh /
+COPY scripts/* /
 RUN chmod +x /build-rhsm.sh
 
 CMD ["/build-rhsm.sh"]

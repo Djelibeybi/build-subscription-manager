@@ -1,4 +1,4 @@
-# Copyright (c) 2021, 2023 Avi Miller
+# Copyright (c) 2021, 2024 Avi Miller
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
 
 # hadolint global ignore=DL3041
@@ -17,7 +17,7 @@ RUN echo > /etc/dnf/vars/ociregion \
     && python3 -m pip install --no-cache-dir tito==0.6.22 \
     && rpmdev-setuptree
 
-COPY scripts/build-rhsm.sh /
+COPY scripts/* /
 RUN chmod +x /build-rhsm.sh
 
 CMD ["/build-rhsm.sh"]
