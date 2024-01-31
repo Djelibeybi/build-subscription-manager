@@ -3,21 +3,31 @@
 # Copyright (c) 2021, 2024 Avi Miller
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
 
-# Clone the repo
+# Clone the repos
 cd /root || exit
 git clone https://github.com/candlepin/subscription-manager.git
+git clone https://github.com/candlepin/subscription-manager-rhsm-certificates
 
-# Checkout the release tag
+# Checkout the subscription-manager release tag and build with tito
 cd /root/subscription-manager || exit
 git checkout "subscription-manager-$RHSM_VERSION-$RHSM_RELEASE"
-
-# Use tito to build the source RPM
 tito build --tag="subscription-manager-$RHSM_VERSION-$RHSM_RELEASE" --srpm --dist=".$RHSM_DIST" --offline
+
+# Checkout the certificates and build with tito
+cd /root/subscription-manager-rhsm-certificates || exit
+git checkout "subscription-manager-rhsm-certificates-$RHSM_CERTS_VERSION-$RHSM_RELEASE"
+tito build --tag="subscription-manager-rhsm-certificates-$RHSM_CERTS_VERSION-$RHSM_RELEASE" --srpm --dist=".$RHSM_DIST" --offline
+
+# Copy the source RPMs to the RPM tree
 cp "/tmp/tito/subscription-manager-$RHSM_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rpm" /root/rpmbuild/SRPMS/
+cp "/tmp/tito/subscription-manager-rhsm-certificates-$RHSM_CERTS_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rpm" /root/rpmbuild/SRPMS/
 
 # Build the binary RPMs
-dnf builddep -y "/root/rpmbuild/SRPMS/subscription-manager-$RHSM_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rpm"
-rpmbuild --rebuild "/root/rpmbuild/SRPMS/subscription-manager-$RHSM_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rpm"
+dnf builddep -y "/root/rpmbuild/SRPMS/subscription-manager-$RHSM_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rpm" \
+                "/root/rpmbuild/SRPMS/subscription-manager-rhsm-certificates-$RHSM_CERTS_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rpm"
+
+rpmbuild --rebuild "/root/rpmbuild/SRPMS/subscription-manager-$RHSM_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rpm" \
+                   "/root/rpmbuild/SRPMS/subscription-manager-rhsm-certificates-$RHSM_CERTS_VERSION-$RHSM_RELEASE.$RHSM_DIST.src.rpm"
 
 # Sign the binary RPMs if the required files and envvar are provided
 if [ -f /gpg/key.asc ] && [ -f /gpg/passphrase ] && [ "$GPG_NAME_EMAIL" ]; then
