@@ -5,6 +5,7 @@
 #
 # find the latest upstream version of the subscription-manager RPM
 RHSM_NVR=$(docker run --rm -it -v "$PWD/scripts:/scripts" registry.access.redhat.com/ubi9/ubi rpm -q --queryformat="%{VERSION}:%{RELEASE}" subscription-manager)
+RHSM_CERTS_VERSION=$(docker run --rm -it -v "$PWD/scripts:/scripts" registry.access.redhat.com/ubi9/ubi rpm -q --queryformat="%{VERSION}" subscription-manager-rhsm-certificates)
 RHSM_VERSION=$(echo "$RHSM_NVR" | cut -d: -f1)
 RHSM_REL=$(echo "$RHSM_NVR" | cut -d: -f2)
 RHSM_RELEASE=$(echo "$RHSM_REL" | cut -d. -f1)
@@ -25,6 +26,7 @@ docker run --rm -it \
     -v "$PWD/output:/output" \
     -e RHSM_VERSION="$RHSM_VERSION" \
     -e RHSM_RELEASE="$RHSM_RELEASE" \
+    -e RHSM_CERTS_VERSION="$RHSM_CERTS_VERSION" \
     -e RHSM_DIST="$RHSM_DIST" \
     -e GPG_NAME_EMAIL \
     "build-rhsm:ol9-$IMG_VER"
