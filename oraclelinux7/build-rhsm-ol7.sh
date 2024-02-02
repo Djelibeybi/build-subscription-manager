@@ -4,7 +4,7 @@
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl/
 #
 # find the latest upstream version of the subscription-manager RPM
-RHSM_NVR=$(docker run --rm -it -v "$PWD/scripts:/scripts registry.access.redhat.com/ubi7/ubi rpm" -q --queryformat="%{VERSION}:%{RELEASE}" subscription-manager)
+RHSM_NVR=$(docker run --rm -it registry.access.redhat.com/ubi7/ubi rpm -q --queryformat="%{VERSION}:%{RELEASE}" subscription-manager)
 RHSM_VERSION=$(echo "$RHSM_NVR" | cut -d: -f1)
 RHSM_REL=$(echo "$RHSM_NVR" | cut -d: -f2)
 RHSM_RELEASE=$(echo "$RHSM_REL" | cut -d. -f1)
