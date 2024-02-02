@@ -39,5 +39,7 @@ if [ -f /gpg/key.asc ] && [ -f /gpg/passphrase ] && [ "$GPG_NAME_EMAIL" ]; then
 fi
 
 # Copy the RPMs to the output location
-mkdir /output/oraclelinux7
-cp -r /root/rpmbuild/RPMS/* /output/oraclelinux7/
+if [ ! -d /output/oraclelinux7 ]; then
+  mkdir /output/oraclelinux7
+fi
+cp -rf /root/rpmbuild/RPMS/* /output/oraclelinux7/
